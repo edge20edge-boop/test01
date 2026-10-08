@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Космос Контента - Психологический Поиск</title>
+    <style>
+        /* CSS Variables */
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #151b3d;
+            --bg-card: #1a1f4a;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-glow: #a78bfa;
+            --text-primary: #e0e7ff;
+            --text-secondary: #a5b4fc;
+            --text-muted: #6b7280;
+            --border-color: #374151;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Reset & Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Starry Background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Main Container */
+        #app {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, transparent 100%);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Search Screen */
+        .search-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .search-intro {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .search-intro h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .search-intro p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .search-btn:active {
+            transform: translateY(0);
+        }
+
+        .search-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Example Tags */
+        .examples {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .example-tag {
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .example-tag:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        /* Results Screen */
+        .results-screen {
+            display: none;
+        }
+
+        .results-screen.active {
+            display: block;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .results-title {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+        }
+
+        .back-btn {
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+
+        .filter-tab.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: white;
+        }
+
+        .filter-tab:hover:not(.active) {
+            border-color: var(--accent-primary);
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Content Card */
+        .content-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .content-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .card-poster {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-poster svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .card-type-badge {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            backdrop-filter: blur(4px);
+        }
+
+        .card-content {
+            padding: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .card-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .card-tag {
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 1.1rem;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-poster {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-poster svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .modal-content {
+            padding: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .modal-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--accent-primary);
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .modal-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-close {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .modal-close:hover {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .search-intro h2 {
+                font-size: 1.2rem;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-poster {
+                height: 200px;
+            }
+        }
+
+        /* Accessibility */
+        button:focus-visible,
+        input:focus-visible {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div id="app">
+        <header>
+            <div class="logo">🌌 Космос Контента</div>
+            <div class="subtitle">Найдите идеальный контент для психологических тем</div>
+        </header>
+
+        <main>
+            <!-- Search Screen -->
+            <div class="search-screen" id="searchScreen">
+                <div class="search-intro">
+                    <h2>Исследуйте контент по темам</h2>
+                    <p>Введите тему или запрос, и мы подберем фильмы, мультфильмы, сериалы и игры, которые помогут разобраться в психологических вопросах</p>
+                </div>
+
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        class="search-input" 
+                        id="searchInput" 
+                        placeholder="Например: конфликты с родителями, дружба, преодоление тревоги..."
+                        aria-label="Поиск контента"
+                    >
+                    <button class="search-btn" id="searchBtn" aria-label="Искать">
+                        🔍 Найти контент
+                    </button>
+                </div>
+
+                <div class="examples" id="examples">
+                    <div class="example-tag" data-query="конфликты с родителями">Конфликты с родителями</div>
+                    <div class="example-tag" data-query="дружба">Дружба</div>
+                    <div class="example-tag" data-query="самопознание">Самопознание</div>
+                    <div class="example-tag" data-query="тревога">Преодоление тревоги</div>
+                    <div class="example-tag" data-query="эмоции">Управление эмоциями</div>
+                </div>
+            </div>
+
+            <!-- Results Screen -->
+            <div class="results-screen" id="resultsScreen">
+                <div class="results-header">
+                    <h2 class="results-title" id="resultsTitle">Результаты поиска</h2>
+                    <button class="back-btn" id="backBtn" aria-label="Вернуться к поиску">
+                        ← Новый поиск
+                    </button>
+                </div>
+
+                <div class="filter-tabs" id="filterTabs">
+                    <button class="filter-tab active" data-filter="all">Все</button>
+                    <button class="filter-tab" data-filter="film">Фильмы</button>
+                    <button class="filter-tab" data-filter="cartoon">Мультфильмы</button>
+                    <button class="filter-tab" data-filter="series">Сериалы</button>
+                    <button class="filter-tab" data-filter="game">Игры</button>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <div>Ищем в космосе контента...</div>
+                </div>
+
+                <div class="content-grid" id="contentGrid"></div>
+
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-state-icon">🔭</div>
+                    <div class="empty-state-text">Ничего не найдено. Попробуйте другой запрос.</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true">
+        <div class="modal" id="modal">
+            <div class="modal-poster" id="modalPoster"></div>
+            <div class="modal-content">
+                <h3 class="modal-title" id="modalTitle"></h3>
+                <span class="modal-type" id="modalType"></span>
+                <p class="modal-description" id="modalDescription"></p>
+                <div class="modal-tags" id="modalTags"></div>
+                <button class="modal-close" id="modalClose">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Constants - Content Database
+        const CONTENT_DATABASE = [
+            {
+                id: 1,
+                title: "Головоломка",
+                type: "cartoon",
+                typeName: "Мультфильм",
+                description: "История о девочке Райли и её эмоциях. Помогают понять, как работают чувства и почему важно принимать все эмоции.",
+                tags: ["эмоции", "самопознание", "взросление", "семья"],
+                posterColor: "#fbbf24"
+            },
+            {
+                id: 2,
+                title: "Душа",
+                type: "cartoon",
+                typeName: "Мультфильм",
+                description: "Путешествие джазмена, который ищет смысл жизни. Помогает задуматься о предназначении и радости маленьких моментов.",
+                tags: ["самопознание", "смысл жизни", "вдохновение"],
+                posterColor: "#8b5cf6"
+            },
+            {
+                id: 3,
+                title: "Форрест Гамп",
+                type: "film",
+                typeName: "Фильм",
+                description: "История простого человека с большим сердцем. О дружбе, любви и верности себе вопреки всему.",
+                tags: ["дружба", "любовь", "преодоление", "доброта"],
+                posterColor: "#10b981"
+            },
+            {
+                id: 4,
+                title: "Хорошо быть тихоней",
+                type: "film",
+                typeName: "Фильм",
+                description: "Подросток проходит через трудности взросления, находя поддержку в дружбе и первой любви.",
+                tags: ["подростки", "дружба", "одиночество", "принятие"],
+                posterColor: "#f59e0b"
+            },
+            {
+                id: 5,
+                title: "Король Лев",
+                type: "cartoon",
+                typeName: "Мультфильм",
+                description: "История Симбы о потере, вине и возвращении к себе. Помогает понять важность принятия прошлого.",
+                tags: ["потеря", "ответственность", "взросление", "семья"],
+                posterColor: "#ef4444"
+            },
+            {
+                id: 6,
+                title: "13 причин почему",
+                type: "series",
+                typeName: "Сериал",
+                description: "Сериал о последствиях буллинга и важности поддержки. Помогает понять влияние наших действий на других.",
+                tags: ["буллинг", "депрессия", "поддержка", "подростки"],
+                posterColor: "#dc2626"
+            },
+            {
+                id: 7,
+                title: "Это мы",
+                type: "series",
+                typeName: "Сериал",
+                description: "История семьи Пирсонов через десятилетия. О отношениях, прощении и связи между поколениями.",
+                tags: ["семья", "отношения", "прощение", "родители"],
+                posterColor: "#3b82f6"
+            },
+            {
+                id: 8,
+                title: "Терапия",
+                type: "series",
+                typeName: "Сериал",
+                description: "История о психотерапевте и его пациентах. Показывает различные психологические проблемы и пути их решения.",
+                tags: ["терапия", "тревога", "депрессия", "отношения"],
+                posterColor: "#6366f1"
+            },
+            {
+                id: 9,
+                title: "Life is Strange",
+                type: "game",
+                typeName: "Игра",
+                description: "Интерактивная история о дружбе, выборе и последствиях. Помогает понять ценность отношений.",
+                tags: ["дружба", "выбор", "последствия", "подростки"],
+                posterColor: "#8b5cf6"
+            },
+            {
+                id: 10,
+                title: "Celeste",
+                type: "game",
+                typeName: "Игра",
+                description: "История девушки, поднимающейся на гору и борющейся с тревогой. Метафора преодоления внутренних демонов.",
+                tags: ["тревога", "преодоление", "самопринятие"],
+                posterColor: "#ec4899"
+            },
+            {
+                id: 11,
+                title: "Вверх",
+                type: "cartoon",
+                typeName: "Мультфильм",
+                description: "История пожилого мужчины и мальчика-скаута о дружбе, потере и новых приключениях в любом возрасте.",
+                tags: ["дружба", "потеря", "приключения", "одиночество"],
+                posterColor: "#06b6d4"
+            },
+            {
+                id: 12,
+                title: "Одержимость",
+                type: "film",
+                typeName: "Фильм",
+                description: "История о стремлении к совершенству и цене успеха. Помогает задуматься о балансе в жизни.",
+                tags: ["перфекционизм", "давление", "амбиции", "отношения"],
+                posterColor: "#78716c"
+            },
+            {
+                id: 13,
+                title: "Комната",
+                type: "film",
+                typeName: "Фильм",
+                description: "История матери и ребенка, показывающая силу связи и способность адаптироваться к трудным обстоятельствам.",
+                tags: ["травма", "адаптация", "связь", "устойчивость"],
+                posterColor: "#64748b"
+            },
+            {
+                id: 14,
+                title: "Undertale",
+                type: "game",
+                typeName: "Игра",
+                description: "Игра о выборе между насилием и миром. Учит эмпатии и показывает, что у каждой ситуации есть альтернатива.",
+                tags: ["эмпатия", "выбор", "мир", "дружба"],
+                posterColor: "#fbbf24"
+            },
+            {
+                id: 15,
+                title: "Грань",
+                type: "series",
+                typeName: "Сериал",
+                description: "Сериал о подростках, проходящих через реабилитацию. Показывает пути восстановления и поддержки.",
+                tags: ["зависимости", "реабилитация", "поддержка", "подростки"],
+                posterColor: "#14b8a6"
+            },
+            {
+                id: 16,
+                title: "Рататуй",
+                type: "cartoon",
+                typeName: "Мультфильм",
+                description: "История крысы-повара, которая мечтает вопреки ожиданиям. О следовании за страстью и преодолении предрассудков.",
+                tags: ["мечта", "предрассудки", "страсть", "самопринятие"],
+                posterColor: "#f97316"
+            },
+            {
+                id: 17,
+                title: "Игры разума",
+                type: "film",
+                typeName: "Фильм",
+                description: "История математика с шизофренией. О борьбе с болезнью и поддержке близких.",
+                tags: ["психическое здоровье", "поддержка", "гениальность", "любовь"],
+                posterColor: "#0ea5e9"
+            },
+            {
+                id: 18,
+                title: "Stardew Valley",
+                type: "game",
+                typeName: "Игра",
+                description: "Фермерский симулятор о начале новой жизни. Помогает справиться со стрессом и найти баланс.",
+                tags: ["релакс", "новая жизнь", "сообщество", "баланс"],
+                posterColor: "#84cc16"
+            }
+        ];
+
+        // State
+        const state = {
+            currentScreen: 'search',
+            searchQuery: '',
+            currentFilter: 'all',
+            filteredResults: []
+        };
+
+        // Generate Stars Background
+        function generateStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Generate SVG Poster
+        function generatePoster(item) {
+            const color = item.posterColor;
+            const type = item.type;
+            
+            let icon = '';
+            if (type === 'film') {
+                icon = `<circle cx="150" cy="100" r="40" fill="${color}" opacity="0.8"/>
+                        <rect x="130" y="80" width="40" height="40" fill="white" opacity="0.3"/>`;
+            } else if (type === 'cartoon') {
+                icon = `<circle cx="150" cy="100" r="50" fill="${color}" opacity="0.8"/>
+                        <circle cx="135" cy="90" r="8" fill="white"/>
+                        <circle cx="165" cy="90" r="8" fill="white"/>
+                        <path d="M 130 110 Q 150 125 170 110" stroke="white" stroke-width="3" fill="none"/>`;
+            } else if (type === 'series') {
+                icon = `<rect x="100" y="60" width="100" height="80" rx="5" fill="${color}" opacity="0.8"/>
+                        <rect x="110" y="70" width="80" height="50" fill="white" opacity="0.3"/>
+                        <polygon points="140,85 140,105 160,95" fill="white"/>`;
+            } else if (type === 'game') {
+                icon = `<rect x="110" y="70" width="80" height="60" rx="10" fill="${color}" opacity="0.8"/>
+                        <circle cx="135" cy="90" r="8" fill="white"/>
+                        <circle cx="165" cy="90" r="8" fill="white"/>
+                        <rect x="130" y="105" width="40" height="10" rx="5" fill="white" opacity="0.5"/>`;
+            }
+
+            return `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="grad${item.id}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:${color};stop-opacity:0.3" />
+                        <stop offset="100%" style="stop-color:${color};stop-opacity:0.1" />
+                    </linearGradient>
+                </defs>
+                <rect width="300" height="200" fill="url(#grad${item.id})"/>
+                ${icon}
+                <circle cx="50" cy="50" r="30" fill="white" opacity="0.1"/>
+                <circle cx="250" cy="150" r="40" fill="white" opacity="0.1"/>
+            </svg>`;
+        }
+
+        // Search Content
+        function searchContent(query) {
+            const normalizedQuery = query.toLowerCase().trim();
+            
+            if (!normalizedQuery) {
+                return [];
+            }
+
+            const keywords = normalizedQuery.split(/\s+/);
+            
+            return CONTENT_DATABASE.filter(item => {
+                const searchText = (item.title + ' ' + item.description + ' ' + item.tags.join(' ')).toLowerCase();
+                return keywords.some(keyword => searchText.includes(keyword));
+            });
+        }
+
+        // Render Content Card
+        function renderCard(item) {
+            const card = document.createElement('article');
+            card.className = 'content-card';
+            card.setAttribute('role', 'button');
+            card.setAttribute('tabindex', '0');
+            card.setAttribute('aria-label', `${item.title} - ${item.typeName}`);
+            
+            const poster = document.createElement('div');
+            poster.className = 'card-poster';
+            poster.innerHTML = generatePoster(item);
+            
+            const badge = document.createElement('div');
+            badge.className = 'card-type-badge';
+            badge.textContent = item.typeName;
+            poster.appendChild(badge);
+            
+            const content = document.createElement('div');
+            content.className = 'card-content';
+            
+            const title = document.createElement('h3');
+            title.className = 'card-title';
+            title.textContent = item.title;
+            
+            const description = document.createElement('p');
+            description.className = 'card-description';
+            description.textContent = item.description;
+            
+            const tags = document.createElement('div');
+            tags.className = 'card-tags';
+            item.tags.slice(0, 3).forEach(tag => {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'card-tag';
+                tagEl.textContent = tag;
+                tags.appendChild(tagEl);
+            });
+            
+            content.appendChild(title);
+            content.appendChild(description);
+            content.appendChild(tags);
+            card.appendChild(poster);
+            card.appendChild(content);
+            
+            // Open modal on click
+            card.addEventListener('click', () => openModal(item));
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openModal(item);
+                }
+            });
+            
+            return card;
+        }
+
+        // Render Results
+        function renderResults() {
+            const grid = document.getElementById('contentGrid');
+            grid.innerHTML = '';
+            
+            const results = state.currentFilter === 'all' 
+                ? state.filteredResults 
+                : state.filteredResults.filter(item => item.type === state.currentFilter);
+            
+            if (results.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                return;
+            }
+            
+            document.getElementById('emptyState').style.display = 'none';
+            
+            results.forEach(item => {
+                grid.appendChild(renderCard(item));
+            });
+        }
+
+        // Open Modal
+        function openModal(item) {
+            const overlay = document.getElementById('modalOverlay');
+            const poster = document.getElementById('modalPoster');
+            const title = document.getElementById('modalTitle');
+            const type = document.getElementById('modalType');
+            const description = document.getElementById('modalDescription');
+            const tags = document.getElementById('modalTags');
+            
+            poster.innerHTML = generatePoster(item);
+            title.textContent = item.title;
+            type.textContent = item.typeName;
+            description.textContent = item.description;
+            
+            tags.innerHTML = '';
+            item.tags.forEach(tag => {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'card-tag';
+                tagEl.textContent = tag;
+                tags.appendChild(tagEl);
+            });
+            
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Modal
+        function closeModal() {
+            const overlay = document.getElementById('modalOverlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Switch to Results Screen
+        function showResults(query) {
+            state.searchQuery = query;
+            state.currentScreen = 'results';
+            
+            document.getElementById('searchScreen').style.display = 'none';
+            document.getElementById('resultsScreen').classList.add('active');
+            document.getElementById('resultsTitle').textContent = `Результаты: "${query}"`;
+            
+            // Show loading
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('contentGrid').style.display = 'none';
+            
+            // Simulate search delay
+            setTimeout(() => {
+                state.filteredResults = searchContent(query);
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('contentGrid').style.display = 'grid';
+                renderResults();
+            }, 500);
+        }
+
+        // Switch to Search Screen
+        function showSearch() {
+            state.currentScreen = 'search';
+            state.searchQuery = '';
+            state.currentFilter = 'all';
+            
+            document.getElementById('searchScreen').style.display = 'flex';
+            document.getElementById('resultsScreen').classList.remove('active');
+            
+            // Reset filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector('[data-filter="all"]').classList.add('active');
+        }
+
+        // Event Handlers
+        function initHandlers() {
+            // Search button
+            document.getElementById('searchBtn').addEventListener('click', () => {
+                const query = document.getElementById('searchInput').value.trim();
+                if (query) {
+                    showResults(query);
+                }
+            });
+
+            // Search input enter key
+            document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const query = e.target.value.trim();
+                    if (query) {
+                        showResults(query);
+                    }
+                }
+            });
+
+            // Example tags
+            document.getElementById('examples').addEventListener('click', (e) => {
+                if (e.target.classList.contains('example-tag')) {
+                    const query = e.target.dataset.query;
+                    document.getElementById('searchInput').value = query;
+                    showResults(query);
+                }
+            });
+
+            // Back button
+            document.getElementById('backBtn').addEventListener('click', showSearch);
+
+            // Filter tabs
+            document.getElementById('filterTabs').addEventListener('click', (e) => {
+                if (e.target.classList.contains('filter-tab')) {
+                    document.querySelectorAll('.filter-tab').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    e.target.classList.add('active');
+                    state.currentFilter = e.target.dataset.filter;
+                    renderResults();
+                }
+            });
+
+            // Modal close
+            document.getElementById('modalClose').addEventListener('click', closeModal);
+            document.getElementById('modalOverlay').addEventListener('click', (e) => {
+                if (e.target.id === 'modalOverlay') {
+                    closeModal();
+                }
+            });
+
+            // Escape key to close modal
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && document.getElementById('modalOverlay').classList.contains('active')) {
+                    closeModal();
+                }
+            });
+        }
+
+        // Initialize
+        function init() {
+            generateStars();
+            initHandlers();
+        }
+
+        // Start app
+        init();
+    </script>
+</body>
+</html>
